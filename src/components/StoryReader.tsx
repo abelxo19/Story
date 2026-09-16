@@ -10,6 +10,7 @@ import {
   removeBookmark,
   saveStoryProgress,
 } from "@/lib/api";
+import { StorySpeaker } from "@/components/StorySpeaker";
 import type { Story } from "@/types/story";
 
 interface StoryReaderProps {
@@ -124,6 +125,7 @@ export function StoryReader({ story }: StoryReaderProps) {
 
         <div className="space-y-6 px-8 py-10 sm:px-12">
           <h2 className="story-scene-title text-2xl text-amber-950">{scene.title}</h2>
+          <StorySpeaker title={scene.title} text={scene.text} />
           <div className="space-y-5">
             {scene.text.split(/\n\n+/).map((paragraph, paragraphIndex) => (
               <p

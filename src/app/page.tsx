@@ -19,17 +19,21 @@ export default function LandingPage() {
           </div>
           <p className="story-body mx-auto max-w-2xl text-base leading-8 text-amber-950/75 sm:text-lg">
             Illustrated fairy tales and original retellings, set like an old
-            manuscript. Sign in to open the library, continue where you left off,
+            manuscript. Sign in to open the library, hear each chapter aloud,
             and keep the tales you love.
           </p>
           <LandingActions />
         </header>
 
-        <section className="grid gap-6 md:grid-cols-3" aria-label="What you can do">
+        <section className="grid gap-6 sm:grid-cols-2" aria-label="What you can do">
           {[
             {
               title: "Keep your place",
               text: "The last chapter you opened waits for you, so the tale can continue without hunting for the page.",
+            },
+            {
+              title: "Hear the tale",
+              text: "A quiet speaker reads each chapter aloud, so young readers can listen as the pages turn.",
             },
             {
               title: "Save favorites",
