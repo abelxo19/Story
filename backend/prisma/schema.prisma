@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum StoryStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  name         String
+  passwordHash String
+  role         Role              @default(USER)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  progress     ReadingProgress[]
+  bookmarks    Bookmark[]
+}
+
+model Story {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  title       String
+  description String
+  coverImage  String?
+  source      String?
+  sourceUrl   String?
+  status      StoryStatus       @default(PUBLISHED)
+  sortOrder   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  scenes      Scene[]
+  progress    ReadingProgress[]
+  bookmarks   Bookmark[]
+}
+
+model Scene {
+  id        String   @id @default(cuid())
+  storyId   String
+  title     String
+  text      String
+  imageUrl  String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+}
+
+model ReadingProgress {
+  id         String    @id @default(cuid())
+  userId     String
+  storyId    String
+  sceneIndex Int       @default(0)
+  completed  Boolean   @default(false)
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story      Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  storyId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyId])
+}

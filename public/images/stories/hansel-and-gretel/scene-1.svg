@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#d4e4c4"/>
+  <ellipse cx="400" cy="420" rx="360" ry="60" fill="#8aab6e" opacity="0.5"/>
+  <rect x="280" y="260" width="240" height="140" rx="8" fill="#8b5a2b"/>
+  <polygon points="280,260 400,180 520,260" fill="#6b4226"/>
+  <rect x="370" y="320" width="60" height="80" fill="#4a2f18"/>
+  <rect x="310" y="290" width="50" height="50" fill="#f5e6a8"/>
+  <rect x="440" y="290" width="50" height="50" fill="#f5e6a8"/>
+  <circle cx="150" cy="120" r="40" fill="#2d5016"/>
+  <circle cx="650" cy="100" r="50" fill="#2d5016"/>
+  <circle cx="500" cy="150" r="35" fill="#3a6b28"/>
+  <text x="400" y="470" text-anchor="middle" fill="#3f2a14" font-family="Georgia, serif" font-size="22">The Dark Woods</text>
+</svg>

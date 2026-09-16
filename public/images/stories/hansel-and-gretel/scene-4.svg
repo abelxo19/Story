@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#fde8c8"/>
+  <circle cx="400" cy="120" r="60" fill="#ffd93d" opacity="0.8"/>
+  <rect x="280" y="260" width="240" height="140" rx="8" fill="#8b5a2b"/>
+  <polygon points="280,260 400,180 520,260" fill="#6b4226"/>
+  <rect x="370" y="320" width="60" height="80" fill="#4a2f18"/>
+  <circle cx="320" cy="350" r="20" fill="#f5d0a9"/>
+  <circle cx="480" cy="350" r="20" fill="#f5d0a9"/>
+  <path d="M300 380 Q320 360 340 380" stroke="#3f2a14" stroke-width="2" fill="none"/>
+  <path d="M460 380 Q480 360 500 380" stroke="#3f2a14" stroke-width="2" fill="none"/>
+  <path d="M200 200 Q250 150 300 200" stroke="#2d5016" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M500 200 Q550 150 600 200" stroke="#2d5016" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <text x="400" y="470" text-anchor="middle" fill="#3f2a14" font-family="Georgia, serif" font-size="22">The Brave Escape</text>
+</svg>

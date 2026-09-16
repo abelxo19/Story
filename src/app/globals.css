@@ -1,0 +1,321 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6ead8;
+  --foreground: #3f2a14;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-story-body);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-story-body), Georgia, "Times New Roman", serif;
+}
+
+.manuscript-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #f6ead8;
+  background-image:
+    radial-gradient(circle at 18% 12%, rgb(255 252 241 / 45%), transparent 27rem),
+    radial-gradient(circle at 82% 72%, rgb(112 74 36 / 5%), transparent 34rem),
+    repeating-linear-gradient(
+      88deg,
+      rgb(104 69 36 / 1.8%) 0,
+      rgb(104 69 36 / 1.8%) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+}
+
+.manuscript-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+  content: "";
+  opacity: 0.11;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.story-title,
+.story-scene-title {
+  font-family: var(--font-story-title), Georgia, "Times New Roman", serif;
+}
+
+.story-body {
+  font-family: var(--font-story-body), Georgia, "Times New Roman", serif;
+}
+
+.story-kicker {
+  font-family: var(--font-story-body), Georgia, "Times New Roman", serif;
+}
+
+.page-intro {
+  animation: manuscript-rise 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ornamental-divider {
+  display: flex;
+  width: min(18rem, 62vw);
+  align-items: center;
+  gap: 0.85rem;
+  color: rgb(120 74 27 / 48%);
+}
+
+.ornamental-divider::before,
+.ornamental-divider::after {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, rgb(120 74 27 / 34%));
+  content: "";
+}
+
+.ornamental-divider::after {
+  background: linear-gradient(90deg, rgb(120 74 27 / 34%), transparent);
+}
+
+.ornamental-divider span {
+  font-size: 0.55rem;
+}
+
+.story-card {
+  border: 1px solid rgb(112 70 28 / 17%);
+  background:
+    linear-gradient(105deg, rgb(126 80 34 / 2.5%), transparent 28%),
+    rgb(255 249 239 / 94%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 65%) inset,
+    0 10px 32px rgb(92 56 20 / 6%);
+  outline: none;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 420ms ease,
+    box-shadow 420ms ease;
+}
+
+.story-card::after {
+  position: absolute;
+  inset: 0.35rem;
+  border: 1px solid rgb(112 70 28 / 5%);
+  border-radius: 0.65rem;
+  content: "";
+  pointer-events: none;
+}
+
+.story-card:hover {
+  border-color: rgb(112 70 28 / 25%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 75%) inset,
+    0 19px 48px rgb(92 56 20 / 10%);
+  transform: translateY(-4px);
+}
+
+.story-card:focus-visible {
+  box-shadow:
+    0 0 0 3px rgb(246 234 216),
+    0 0 0 5px rgb(112 70 28 / 58%),
+    0 16px 42px rgb(92 56 20 / 9%);
+}
+
+.story-card-enter {
+  animation: manuscript-rise 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.page-corner {
+  position: absolute;
+  width: 1.4rem;
+  height: 1.4rem;
+  opacity: 0.25;
+  transition: opacity 350ms ease;
+}
+
+.page-corner-tl {
+  top: 0.8rem;
+  left: 0.8rem;
+  border-top: 1px solid #795024;
+  border-left: 1px solid #795024;
+}
+
+.page-corner-br {
+  right: 0.8rem;
+  bottom: 0.8rem;
+  border-right: 1px solid #795024;
+  border-bottom: 1px solid #795024;
+}
+
+.story-card:hover .page-corner {
+  opacity: 0.48;
+}
+
+.read-adventure {
+  position: relative;
+  transition:
+    color 300ms ease,
+    letter-spacing 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.read-adventure::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  content: "";
+  opacity: 0.5;
+  transform: scaleX(0.32);
+  transform-origin: left;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.story-card:hover .read-adventure,
+.story-card:focus-visible .read-adventure {
+  color: rgb(96 56 20 / 90%);
+  letter-spacing: 0.29em;
+}
+
+.story-card:hover .read-adventure::after,
+.story-card:focus-visible .read-adventure::after {
+  transform: scaleX(1);
+}
+
+.closing-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(112 70 28 / 36%);
+  font-family: var(--font-story-title), Georgia, serif;
+  font-size: 1.25rem;
+}
+
+.closing-ornament::before,
+.closing-ornament::after {
+  width: 2.5rem;
+  height: 1px;
+  margin: 0 0.8rem;
+  background: rgb(112 70 28 / 18%);
+  content: "";
+}
+
+.manuscript-decorations {
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  --parallax-reverse-x: 0px;
+  --parallax-reverse-y: 0px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.botanical {
+  position: absolute;
+  color: rgb(103 66 30 / 13%);
+  font-family: var(--font-story-title), Georgia, serif;
+  font-size: clamp(5rem, 10vw, 9rem);
+  line-height: 1;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+}
+
+.botanical-left {
+  top: 7rem;
+  left: max(-1.5rem, calc(50% - 38rem));
+  transform: translate(var(--parallax-x), var(--parallax-y)) rotate(-18deg);
+}
+
+.botanical-right {
+  top: 29rem;
+  right: max(-1.5rem, calc(50% - 38rem));
+  transform: translate(var(--parallax-reverse-x), var(--parallax-reverse-y))
+    scaleX(-1) rotate(-12deg);
+}
+
+@keyframes manuscript-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.story-button {
+  font-family: var(--font-story-body), Georgia, "Times New Roman", serif;
+  background: #f3dfc0;
+  color: #3f2a14;
+}
+
+.story-button:hover:not(:disabled) {
+  background: #ebcd9d;
+}
+
+.story-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: rgb(63 42 20 / 78%);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.story-field input,
+.story-field textarea,
+.story-field select {
+  width: 100%;
+  border: 1px solid rgb(112 70 28 / 18%);
+  border-radius: 0.7rem;
+  background: rgb(255 252 244 / 90%);
+  padding: 0.75rem 0.9rem;
+  color: #3f2a14;
+  font-family: var(--font-story-body), Georgia, serif;
+  font-size: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.story-field input:focus,
+.story-field textarea:focus,
+.story-field select:focus {
+  outline: 2px solid rgb(112 70 28 / 28%);
+  outline-offset: 1px;
+}
+
+@media (max-width: 720px) {
+  .botanical {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .story-card:hover {
+    transform: none;
+  }
+
+  .botanical-left,
+  .botanical-right {
+    transform: none;
+  }
+}
