@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { ManuscriptDecorations } from "@/components/ManuscriptDecorations";
@@ -9,10 +10,11 @@ import {
   addBookmark,
   addToReadingList,
   getLibrary,
+  mediaUrl,
   removeBookmark,
   removeFromReadingList,
 } from "@/lib/api";
-import type { LibraryItem, LibraryPayload } from "@/types/story";
+import type { LibraryItem, LibraryPayload, Story } from "@/types/story";
 
 type ShelfFilter =
   | "all"
@@ -30,6 +32,21 @@ const FILTERS: Array<{ id: ShelfFilter; label: string }> = [
   { id: "favorites", label: "Favorites" },
   { id: "list", label: "Reading list" },
 ];
+
+const STORY_COVERS: Record<string, string> = {
+  "hansel-and-gretel": "/hansel and gretel.png",
+  "harry-potter": "/harry poter.png",
+  "snow-white": "/snowwhite.png",
+  "the-hobbit": "/the hobbit.png",
+};
+
+function storyCover(story: Story) {
+  return (
+    STORY_COVERS[story.slug] ??
+    mediaUrl(story.coverImage) ??
+    `/images/stories/${story.slug}/scene-1.svg`
+  );
+}
 
 export default function LibraryPage() {
   return (
@@ -154,12 +171,20 @@ function LibraryView() {
             {items.map((item, index) => (
               <article
                 key={item.story.id}
-                className="story-card story-card-enter group relative flex min-h-[18rem] flex-col overflow-hidden rounded-[0.9rem] p-8 sm:p-10"
+                className="story-card story-card-enter group relative flex min-h-[18rem] flex-col overflow-hidden rounded-[0.9rem]"
                 style={{ animationDelay: `${180 + index * 90}ms` }}
               >
                 <span className="page-corner page-corner-tl" aria-hidden="true" />
                 <span className="page-corner page-corner-br" aria-hidden="true" />
-                <div className="relative z-10 flex h-full flex-col">
+                <div className="relative aspect-[16/10] w-full bg-gradient-to-b from-amber-100 to-amber-50">
+                  <Image
+                    src={storyCover(item.story)}
+                    alt={item.story.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="relative z-10 flex h-full flex-col p-8 sm:p-10">
                   <p className="mb-4 text-[0.65rem] tracking-[0.3em] text-amber-900/45 uppercase">
                     {item.completed
                       ? "Completed"
