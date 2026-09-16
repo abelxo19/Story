@@ -27,6 +27,7 @@ model User {
   updatedAt    DateTime          @updatedAt
   progress     ReadingProgress[]
   bookmarks    Bookmark[]
+  readingList  ReadingListItem[]
 }
 
 model Story {
@@ -44,6 +45,7 @@ model Story {
   scenes      Scene[]
   progress    ReadingProgress[]
   bookmarks   Bookmark[]
+  readingList ReadingListItem[]
 }
 
 model Scene {
@@ -72,6 +74,17 @@ model ReadingProgress {
 }
 
 model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  storyId   String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyId])
+}
+
+model ReadingListItem {
   id        String   @id @default(cuid())
   userId    String
   storyId   String

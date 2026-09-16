@@ -47,4 +47,17 @@ export class LibraryController {
   removeBookmark(@CurrentUser() user: User, @Param('slug') slug: string) {
     return this.libraryService.removeBookmark(user.id, slug);
   }
+
+  @Post('reading-list/:slug')
+  addToReadingList(@CurrentUser() user: User, @Param('slug') slug: string) {
+    return this.libraryService.addToReadingList(user.id, slug);
+  }
+
+  @Delete('reading-list/:slug')
+  removeFromReadingList(
+    @CurrentUser() user: User,
+    @Param('slug') slug: string,
+  ) {
+    return this.libraryService.removeFromReadingList(user.id, slug);
+  }
 }

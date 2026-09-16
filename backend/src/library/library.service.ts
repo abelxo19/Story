@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { StoryStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { toPublicStory } from '../stories/story.mapper.js';
@@ -12,43 +9,78 @@ export class LibraryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getLibrary(userId: string) {
-    const [progressRows, bookmarkRows] = await Promise.all([
-      this.prisma.readingProgress.findMany({
-        where: { userId, story: { status: StoryStatus.PUBLISHED } },
-        include: { story: { include: { scenes: { orderBy: { sortOrder: 'asc' } } } } },
-        orderBy: { updatedAt: 'desc' },
-      }),
-      this.prisma.bookmark.findMany({
-        where: { userId, story: { status: StoryStatus.PUBLISHED } },
-        include: { story: { include: { scenes: { orderBy: { sortOrder: 'asc' } } } } },
-        orderBy: { createdAt: 'desc' },
-      }),
-    ]);
+    const [stories, progressRows, favoriteRows, readingListRows] =
+      await Promise.all([
+        this.prisma.story.findMany({
+          where: { status: StoryStatus.PUBLISHED },
+          include: { scenes: { orderBy: { sortOrder: 'asc' } } },
+          orderBy: { sortOrder: 'asc' },
+        }),
+        this.prisma.readingProgress.findMany({
+          where: { userId, story: { status: StoryStatus.PUBLISHED } },
+          include: {
+            story: { include: { scenes: { orderBy: { sortOrder: 'asc' } } } },
+          },
+          orderBy: { updatedAt: 'desc' },
+        }),
+        this.prisma.bookmark.findMany({
+          where: { userId, story: { status: StoryStatus.PUBLISHED } },
+          include: {
+            story: { include: { scenes: { orderBy: { sortOrder: 'asc' } } } },
+          },
+          orderBy: { createdAt: 'desc' },
+        }),
+        this.prisma.readingListItem.findMany({
+          where: { userId, story: { status: StoryStatus.PUBLISHED } },
+          include: {
+            story: { include: { scenes: { orderBy: { sortOrder: 'asc' } } } },
+          },
+          orderBy: { createdAt: 'desc' },
+        }),
+      ]);
+
+    const progressByStory = new Map(
+      progressRows.map((row) => [row.storyId, row]),
+    );
+    const favoriteIds = new Set(favoriteRows.map((row) => row.storyId));
+    const readingListIds = new Set(readingListRows.map((row) => row.storyId));
+
+    const items = stories.map((story) => {
+      const progress = progressByStory.get(story.id);
+      const completed = progress?.completed ?? false;
+      const unread = !progress;
+      const inProgress = Boolean(progress && !progress.completed);
+
+      return {
+        story: toPublicStory(story),
+        favorite: favoriteIds.has(story.id),
+        onReadingList: readingListIds.has(story.id),
+        completed,
+        unread,
+        inProgress,
+        sceneIndex: progress?.sceneIndex ?? 0,
+      };
+    });
 
     const continueRow = progressRows.find((row) => !row.completed);
-    const continueReading = continueRow
-      ? {
-          sceneIndex: continueRow.sceneIndex,
-          sceneTitle:
-            continueRow.story.scenes[continueRow.sceneIndex]?.title ??
-            continueRow.story.title,
-          story: toPublicStory(continueRow.story),
-        }
-      : null;
 
     return {
-      continueReading,
-      bookmarks: bookmarkRows.map((row) => toPublicStory(row.story)),
-      completed: progressRows
-        .filter((row) => row.completed)
-        .map((row) => toPublicStory(row.story)),
-      progress: progressRows.map((row) => ({
-        storyId: row.storyId,
-        slug: row.story.slug,
-        sceneIndex: row.sceneIndex,
-        completed: row.completed,
-        updatedAt: row.updatedAt,
-      })),
+      continueReading: continueRow
+        ? {
+            sceneIndex: continueRow.sceneIndex,
+            sceneTitle:
+              continueRow.story.scenes[continueRow.sceneIndex]?.title ??
+              continueRow.story.title,
+            story: toPublicStory(continueRow.story),
+          }
+        : null,
+      items,
+      favorites: items.filter((item) => item.favorite).map((item) => item.story),
+      readingList: items
+        .filter((item) => item.onReadingList)
+        .map((item) => item.story),
+      completed: items.filter((item) => item.completed).map((item) => item.story),
+      unread: items.filter((item) => item.unread).map((item) => item.story),
     };
   }
 
@@ -57,8 +89,13 @@ export class LibraryService {
     const progress = await this.prisma.readingProgress.findUnique({
       where: { userId_storyId: { userId, storyId: story.id } },
     });
-    const bookmarked = Boolean(
+    const favorite = Boolean(
       await this.prisma.bookmark.findUnique({
+        where: { userId_storyId: { userId, storyId: story.id } },
+      }),
+    );
+    const onReadingList = Boolean(
+      await this.prisma.readingListItem.findUnique({
         where: { userId_storyId: { userId, storyId: story.id } },
       }),
     );
@@ -66,7 +103,9 @@ export class LibraryService {
     return {
       sceneIndex: progress?.sceneIndex ?? 0,
       completed: progress?.completed ?? false,
-      bookmarked,
+      bookmarked: favorite,
+      favorite,
+      onReadingList,
     };
   }
 
@@ -102,7 +141,7 @@ export class LibraryService {
       create: { userId, storyId: story.id },
       update: {},
     });
-    return { bookmarked: true };
+    return { favorite: true, bookmarked: true };
   }
 
   async removeBookmark(userId: string, slug: string) {
@@ -110,7 +149,25 @@ export class LibraryService {
     await this.prisma.bookmark.deleteMany({
       where: { userId, storyId: story.id },
     });
-    return { bookmarked: false };
+    return { favorite: false, bookmarked: false };
+  }
+
+  async addToReadingList(userId: string, slug: string) {
+    const story = await this.requirePublishedStory(slug);
+    await this.prisma.readingListItem.upsert({
+      where: { userId_storyId: { userId, storyId: story.id } },
+      create: { userId, storyId: story.id },
+      update: {},
+    });
+    return { onReadingList: true };
+  }
+
+  async removeFromReadingList(userId: string, slug: string) {
+    const story = await this.requirePublishedStory(slug);
+    await this.prisma.readingListItem.deleteMany({
+      where: { userId, storyId: story.id },
+    });
+    return { onReadingList: false };
   }
 
   private async requirePublishedStory(slug: string) {

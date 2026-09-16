@@ -36,8 +36,8 @@ export default function LandingPage() {
               text: "A quiet speaker reads each chapter aloud, so young readers can listen as the pages turn.",
             },
             {
-              title: "Save favorites",
-              text: "Bookmark the stories you want to reread — a small ribbon on the shelf of your account.",
+              title: "Your library",
+              text: "Save favorites, keep a reading list, and filter tales by unread, finished, or loved.",
             },
             {
               title: "A keeper’s desk",

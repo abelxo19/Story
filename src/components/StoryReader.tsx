@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import {
   addBookmark,
+  addToReadingList,
   getStoryProgress,
   mediaUrl,
   removeBookmark,
+  removeFromReadingList,
   saveStoryProgress,
 } from "@/lib/api";
 import { StorySpeaker } from "@/components/StorySpeaker";
@@ -21,6 +23,7 @@ export function StoryReader({ story }: StoryReaderProps) {
   const { user } = useAuth();
   const [sceneIndex, setSceneIndex] = useState(0);
   const [bookmarked, setBookmarked] = useState(false);
+  const [onReadingList, setOnReadingList] = useState(false);
   const [completed, setCompleted] = useState(false);
   const scene = story.scenes[sceneIndex];
   const isFirst = sceneIndex === 0;
@@ -33,7 +36,8 @@ export function StoryReader({ story }: StoryReaderProps) {
     void getStoryProgress(story.slug)
       .then((progress) => {
         setSceneIndex(progress.sceneIndex);
-        setBookmarked(progress.bookmarked);
+        setBookmarked(progress.favorite ?? progress.bookmarked);
+        setOnReadingList(progress.onReadingList ?? false);
         setCompleted(progress.completed);
       })
       .catch(() => undefined);
@@ -56,7 +60,17 @@ export function StoryReader({ story }: StoryReaderProps) {
     const result = bookmarked
       ? await removeBookmark(story.slug)
       : await addBookmark(story.slug);
-    setBookmarked(result.bookmarked);
+    setBookmarked(result.favorite ?? result.bookmarked);
+  }
+
+  async function toggleReadingList() {
+    if (!user) {
+      return;
+    }
+    const result = onReadingList
+      ? await removeFromReadingList(story.slug)
+      : await addToReadingList(story.slug);
+    setOnReadingList(result.onReadingList);
   }
 
   if (!scene) {
@@ -96,7 +110,14 @@ export function StoryReader({ story }: StoryReaderProps) {
               onClick={() => void toggleBookmark()}
               className="story-kicker text-xs tracking-[0.22em] uppercase text-amber-900/70"
             >
-              {bookmarked ? "Bookmarked" : "Bookmark"}
+              {bookmarked ? "Favorited" : "Favorite"}
+            </button>
+            <button
+              type="button"
+              onClick={() => void toggleReadingList()}
+              className="story-kicker text-xs tracking-[0.22em] uppercase text-amber-900/70"
+            >
+              {onReadingList ? "On reading list" : "Add to list"}
             </button>
             {completed ? (
               <span className="story-kicker text-xs tracking-[0.22em] uppercase text-amber-900/50">

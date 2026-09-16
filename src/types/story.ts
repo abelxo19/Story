@@ -26,25 +26,33 @@ export interface AuthUser {
   createdAt: string;
 }
 
+export interface LibraryItem {
+  story: Story;
+  favorite: boolean;
+  onReadingList: boolean;
+  completed: boolean;
+  unread: boolean;
+  inProgress: boolean;
+  sceneIndex: number;
+}
+
 export interface LibraryPayload {
   continueReading: {
     sceneIndex: number;
     sceneTitle: string;
     story: Story;
   } | null;
-  bookmarks: Story[];
+  items: LibraryItem[];
+  favorites: Story[];
+  readingList: Story[];
   completed: Story[];
-  progress: Array<{
-    storyId: string;
-    slug: string;
-    sceneIndex: number;
-    completed: boolean;
-    updatedAt: string;
-  }>;
+  unread: Story[];
 }
 
 export interface StoryProgress {
   sceneIndex: number;
   completed: boolean;
   bookmarked: boolean;
+  favorite?: boolean;
+  onReadingList?: boolean;
 }

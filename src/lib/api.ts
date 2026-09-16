@@ -122,13 +122,25 @@ export function saveStoryProgress(
 }
 
 export function addBookmark(slug: string) {
-  return request<{ bookmarked: boolean }>(`/me/bookmarks/${slug}`, {
+  return request<{ bookmarked: boolean; favorite: boolean }>(`/me/bookmarks/${slug}`, {
     method: "POST",
   }, true);
 }
 
 export function removeBookmark(slug: string) {
-  return request<{ bookmarked: boolean }>(`/me/bookmarks/${slug}`, {
+  return request<{ bookmarked: boolean; favorite: boolean }>(`/me/bookmarks/${slug}`, {
+    method: "DELETE",
+  }, true);
+}
+
+export function addToReadingList(slug: string) {
+  return request<{ onReadingList: boolean }>(`/me/reading-list/${slug}`, {
+    method: "POST",
+  }, true);
+}
+
+export function removeFromReadingList(slug: string) {
+  return request<{ onReadingList: boolean }>(`/me/reading-list/${slug}`, {
     method: "DELETE",
   }, true);
 }

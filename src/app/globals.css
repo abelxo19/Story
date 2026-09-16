@@ -293,6 +293,25 @@ body {
   outline-offset: 1px;
 }
 
+.library-filter {
+  border: 1px solid rgb(112 70 28 / 16%);
+  border-radius: 999px;
+  background: rgb(255 249 239 / 70%);
+  padding: 0.55rem 1rem;
+  color: rgb(96 56 20 / 72%);
+  font-family: var(--font-story-body), Georgia, serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.library-filter.is-active,
+.library-filter:hover {
+  border-color: rgb(112 70 28 / 28%);
+  background: #f3dfc0;
+  color: #3f2a14;
+}
+
 @media (max-width: 720px) {
   .botanical {
     opacity: 0.55;
